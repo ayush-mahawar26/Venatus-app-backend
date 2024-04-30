@@ -24,7 +24,6 @@ const verifyJwt = async (req, res, next) => {
     const user = await userModel
       .findById(isTokenValid?.id)
       .select("-password -refreshToken");
-
     if (!user)
       return res.status(400).json(new ApiResponse(400, {}, "Not valid user"));
 

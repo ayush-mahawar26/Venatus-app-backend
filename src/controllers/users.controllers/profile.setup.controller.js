@@ -1,4 +1,4 @@
-import { urlencoded } from "express";
+import { json, urlencoded } from "express";
 import { gameModel } from "../../models/games.model.js";
 import { userModel } from "../../models/user.model.js";
 import { userRoutes } from "../../routes/user.routes.js";
@@ -6,9 +6,10 @@ import { ApiResponse } from "../../utils/ApiReponse.js";
 import { uploadOnCloudinary } from "../../utils/cloudinary.js";
 
 const updateProfile = async (req, res) => {
-  const { fullName, ign, phoneNumber } = req.body;
+  const { fullName, ign, phoneNumber, games } = req.body;
 
   const user = req.user;
+  // console.log(user);
 
   let avtarFile = req.files.avtar;
 
@@ -29,15 +30,33 @@ const updateProfile = async (req, res) => {
     avtarUrl = await uploadOnCloudinary(avtarFile, option);
   }
 
-  user.avtar = avtarUrl;
-  user.fullName = fullName;
-  user.ign = ign;
-  user.phoneNumber = phoneNumber;
-  user.profileCompleted = true;
+  // const jsonArray = JSON.parse(games);
+  const listOfGame = [];
 
-  await user.save({ validateBeforeSave: false });
+  // for (const gameData of jsonArray) {
+  //   const { gameName } = gameData;
 
-  return res.status(200).json(new ApiResponse(200, user, "profile updated"));
+  //   console.log(gameName);
+
+  //   const game = await gameModel.findOne({ gameName: gameData.gameName });
+  //   if (game) {
+  //     listOfGame.push(game._id);
+  //   }
+  // }
+
+  // console.log(listOfGame);
+
+  console.log("successfully done till here");
+  const don = await userModel.findByIdAndUpdate(user._id, {
+    avtar: avtarUrl,
+    fullName,
+    ign,
+    profileCompleted: true,
+    phoneNumber,
+    games: listOfGame,
+  });
+
+  return res.status(200).json(new ApiResponse(200, don, "profile updated"));
 };
 
 const addGame = async (req, res) => {
