@@ -2,6 +2,7 @@ import { Router } from "express";
 import { upload } from "../middlewares/multer.middleware.js";
 import { verifyJwt } from "../middlewares/auth.middleware.js";
 import {
+  addLike,
   addPost,
   getPosts,
 } from "../controllers/post.controllers/post.controllers.js";
@@ -21,5 +22,6 @@ postRoutes.route("/addpost").post(
 );
 
 postRoutes.route("/get").get(getPosts);
+postRoutes.route("/like?:id").get(verifyJwt, addLike);
 
 export { postRoutes };

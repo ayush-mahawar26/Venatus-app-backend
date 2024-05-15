@@ -30,21 +30,17 @@ const updateProfile = async (req, res) => {
     avtarUrl = await uploadOnCloudinary(avtarFile, option);
   }
 
-  // const jsonArray = JSON.parse(games);
+  const jsonArray = JSON.parse(games);
   const listOfGame = [];
 
-  // for (const gameData of jsonArray) {
-  //   const { gameName } = gameData;
+  for (const gameData of jsonArray) {
+    const { gameName } = gameData;
 
-  //   console.log(gameName);
-
-  //   const game = await gameModel.findOne({ gameName: gameData.gameName });
-  //   if (game) {
-  //     listOfGame.push(game._id);
-  //   }
-  // }
-
-  // console.log(listOfGame);
+    const game = await gameModel.findOne({ gameName: gameData.gameName });
+    if (game) {
+      listOfGame.push(game._id);
+    }
+  }
 
   console.log("successfully done till here");
   const don = await userModel.findByIdAndUpdate(user._id, {
@@ -57,6 +53,17 @@ const updateProfile = async (req, res) => {
   });
 
   return res.status(200).json(new ApiResponse(200, don, "profile updated"));
+};
+
+const getUserById = async (req, res) => {
+  const userId = req.query["userId"];
+  console.log(userId);
+
+  const user = await userModel.findById(userId);
+
+  if (!user) return res.json(new ApiResponse(500, {}, "No user Found"));
+
+  return res.json(new ApiResponse(200, user, "user found"));
 };
 
 const addGame = async (req, res) => {
@@ -103,4 +110,10 @@ const getVerifiedDetail = async (req, res) => {
   return res.status(200).json(new ApiResponse(200, false, "Not verified yet"));
 };
 
-export { updateProfile, addGame, getUserProfile, getVerifiedDetail };
+export {
+  updateProfile,
+  addGame,
+  getUserProfile,
+  getVerifiedDetail,
+  getUserById,
+};

@@ -1,16 +1,18 @@
 import express from "express";
+
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import http from "http";
 import { Server } from "socket.io";
 
 const app = express();
+app.use(express.json());
+
 const httpServer = http.createServer(app);
 const io = new Server(httpServer, {});
 
 app.use(cors());
 
-app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 

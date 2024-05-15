@@ -6,6 +6,7 @@ import {
 } from "../controllers/users.controllers/auth.controller.js";
 import {
   addGame,
+  getUserById,
   getUserProfile,
   getVerifiedDetail,
   updateProfile,
@@ -33,6 +34,7 @@ userRoutes.route("/profile/update").post(
 );
 userRoutes.route("/profile/get").get(verifyJwt, getUserProfile);
 userRoutes.route("/profile/user/verify").get(verifyJwt, getVerifiedDetail);
+userRoutes.route("/profile?:userid").get(getUserById);
 
 // Game Operation
 userRoutes.route("/addgame").post(addGame);

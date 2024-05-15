@@ -2,6 +2,7 @@ import { gameModel } from "../../models/games.model.js";
 import { postModel } from "../../models/post.model.js";
 import { ApiResponse } from "../../utils/ApiReponse.js";
 import { uploadOnCloudinary } from "../../utils/cloudinary.js";
+import { io } from "../../app.js";
 
 // get all post
 const getPosts = async (req, res) => {
@@ -45,4 +46,32 @@ const addPost = async (req, res) => {
   return res.json(new ApiResponse(200, post, "Post created Successfully"));
 };
 
-export { getPosts, addPost };
+// add like to post
+const addLike = async (req, res) => {
+  const postId = req.query["postid"];
+
+  if (!postId)
+    return res.json(new ApiResponse(500, {}, "PostId can't be null"));
+
+  const post = await postModel.findOneAndUpdate(
+    {
+      _id: postId,
+    },
+    {
+      $inc: {
+        postLikes: 1,
+      },
+    }
+  );
+
+  if (!post) return res.json(new ApiResponse(400, {}, "Error in post"));
+
+  io.emit("likeupdated", {
+    post: post,
+    likedby: req.user,
+  });
+
+  return res.json(new ApiResponse(200, post, "Like updated"));
+};
+
+export { getPosts, addPost, addLike };
